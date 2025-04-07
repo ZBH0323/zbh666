@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识点定位展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .knowledge-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        .center-icon {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, #4a90e2 0%, #2d5985 100%);
+            border-radius: 50%;
+            margin: 0 auto;
+            top: 40%;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+
+        .center-icon:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .knowledge-box {
+            position: absolute;
+            width: 220px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .knowledge-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .box1 {
+            top: 10%;
+            left: 10%;
+            animation: float 4s ease-in-out infinite;
+        }
+
+
+        .box2 {
+            top: 10%;
+            right: 10%;
+            animation: float 4s ease-in-out infinite 0.5s;
+        }
+
+        .box3 {
+            bottom: -10%;
+            left: calc(50% - 110px); /* 固定水平位置，减去盒子宽度的一半 */
+            animation: float 4s ease-in-out infinite 1s;
+        }
+
+        .knowledge-box h3 {
+            color: #4a90e2;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            font-size: 20px;
+        }
+
+        .knowledge-box ul {
+            list-style-type: none;
+        }
+
+        .knowledge-box li {
+            padding: 8px 0;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+            line-height: 1.5;
+        }
+
+        .knowledge-box li:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 15px;
+            width: 10px;
+            height: 10px;
+            background-color: #4a90e2;
+            border-radius: 50%;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .knowledge-container {
+                width: 100%;
+                height: auto;
+                padding: 20px;
+            }
+
+            .knowledge-box {
+                position: relative;
+                width: 100%;
+                margin-bottom: 20px;
+                top: auto;
+                left: auto;
+                right: auto;
+                bottom: auto;
+                transform: none;
+            }
+
+            .center-icon {
+                margin-bottom: 40px;
+                position: relative;
+                top: auto;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="knowledge-container">
+        <div class="center-icon">核心概念</div>
+
+        <div class="knowledge-box box1">
+            <h3>面向对象特点</h3>
+            <ul>
+                <li>抽象 - 提取对象共同特征</li>
+                <li>封装 - 隐藏实现细节</li>
+                <li>继承 - 代码复用机制</li>
+                <li>多态 - 同一操作不同表现</li>
+            </ul>
+        </div>
+
+        <div class="knowledge-box box2">
+            <h3>类和对象</h3>
+            <ul>
+                <li>类定义 - 属性和方法集合</li>
+                <li>访问控制 - </li>
+                <li>对象创建 - 类的实例化</li>
+                <li>成员函数 - 类中定义的方法</li>
+            </ul>
+        </div>
+
+        <div class="knowledge-box box3">
+            <h3>构造函数</h3>
+            <ul>
+                <li>构造函数 - 对象初始化</li>
+                <li>复制构造 - 对象复制</li>
+                <li>析构函数 - 资源释放</li>
+                <li>类的组合 - 对象作为成员</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
