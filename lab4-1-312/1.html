@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人简历表格</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        th:hover {
+            background-color: #e9e9e9;
+        }
+        
+        td:hover {
+            background-color: #f9f9f9;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            height: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+        
+        textarea {
+            resize: none;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+        
+        fieldset {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        legend {
+            font-weight: bold;
+            padding: 0 15px;
+            color: #444;
+            border-bottom: 2px solid #e0e0e0;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            width: 48%;
+        }
+        
+        .checkbox-item input {
+            width: auto;
+            height: auto;
+            margin-right: 10px;
+        }
+        
+        button {
+            padding: 10px 25px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button[type="reset"] {
+            background-color: #f44336;
+        }
+        
+        button[type="reset"]:hover {
+            background-color: #d32f2f;
+        }
+        
+        .file-input {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .file-input input {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .caption {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 0;
+            text-align: center;
+            color: #444;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .checkbox-item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <table>
+            <caption class="caption">个人简历</caption>
+            <tr>
+                <th>姓名</th>
+                <td><input type="text" maxlength="10"></td>
+                <th>性别</th>
+                <td>
+                    <select>
+                        <option value="">请选择</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </td>
+                <th>年龄</th>
+                <td><input type="number" min="18" max="60"></td>
+                <th rowspan="3">照片</th>
+                <td rowspan="3" class="file-input">
+                    <input type="file" accept="image/*">
+                </td>
+            </tr>
+            <tr>
+                <th>籍贯</th>
+                <td><input type="text" maxlength="20"></td>
+                <th>联系电话</th>
+                <td><input type="tel" maxlength="11"></td>
+                <th>电子邮箱</th>
+                <td><input type="email" maxlength="50"></td>
+            </tr>
+            <tr>
+                <th>学历</th>
+                <td>
+                    <select>
+                        <option value="">请选择</option>
+                        <option value="high-school">高中</option>
+                        <option value="college">大专</option>
+                        <option value="bachelor">本科</option>
+                        <option value="master">硕士</option>
+                        <option value="doctor">博士</option>
+                    </select>
+                </td>
+                <th>健康状况</th>
+                <td>
+                    <select>
+                        <option value="">请选择</option>
+                        <option value="excellent">优秀</option>
+                        <option value="good">良好</option>
+                        <option value="fair">一般</option>
+                    </select>
+                </td>
+                <th>婚姻状况</th>
+                <td>
+                    <select>
+                        <option value="">请选择</option>
+                        <option value="single">未婚</option>
+                        <option value="married">已婚</option>
+                        <option value="divorced">离异</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        
+        <fieldset>
+            <legend>技能证书</legend>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="skill1" name="skill">
+                    <label for="skill1">计算机二级</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="skill2" name="skill">
+                    <label for="skill2">英语四级</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="skill3" name="skill">
+                    <label for="skill3">驾驶证</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="skill4" name="skill">
+                    <label for="skill4">其他证书</label>
+                </div>
+            </div>
+        </fieldset>
+        
+        <table>
+            <tr>
+                <th>求职意向</th>
+                <td>
+                    <select multiple size="4">
+                        <option value="software">软件开发</option>
+                        <option value="web">Web前端</option>
+                        <option value="data">数据分析</option>
+                        <option value="ai">人工智能</option>
+                    </select>
+                </td>
+                <th>专业</th>
+                <td>
+                    <select>
+                        <option value="">请选择</option>
+                        <option value="computer">计算机科学</option>
+                        <option value="software">软件工程</option>
+                        <option value="ai">人工智能</option>
+                    </select>
+                </td>
+                <th>毕业院校</th>
+                <td><input type="text" maxlength="50"></td>
+            </tr>
+        </table>
+        
+        <fieldset>
+            <legend>个人特长与爱好</legend>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hobby1" name="hobby">
+                    <label for="hobby1">阅读</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hobby2" name="hobby">
+                    <label for="hobby2">运动</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hobby3" name="hobby">
+                    <label for="hobby3">音乐</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hobby4" name="hobby">
+                    <label for="hobby4">旅行</label>
+                </div>
+            </div>
+        </fieldset>
+        
+        <table>
+            <tr>
+                <th>项目经历</th>
+                <td><textarea maxlength="500"></textarea></td>
+            </tr>
+            <tr>
+                <th>自我评价</th>
+                <td><textarea maxlength="500"></textarea></td>
+            </tr>
+        </table>
+        
+        <button type="submit">提交</button>
+        <button type="reset">清空</button>
+    </div>
+</body>
+</html>
