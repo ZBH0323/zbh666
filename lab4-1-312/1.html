@@ -146,6 +146,14 @@
             height: 100%;
         }
         
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
         .caption {
             font-size: 18px;
             font-weight: bold;
@@ -169,34 +177,35 @@
             <caption class="caption">个人简历</caption>
             <tr>
                 <th>姓名</th>
-                <td><input type="text" maxlength="10"></td>
+                <td><input type="text" id="name" maxlength="10"></td>
                 <th>性别</th>
                 <td>
-                    <select>
+                    <select id="gender">
                         <option value="">请选择</option>
                         <option value="male">男</option>
                         <option value="female">女</option>
                     </select>
                 </td>
                 <th>年龄</th>
-                <td><input type="number" min="18" max="60"></td>
+                <td><input type="number" id="age" min="18" max="60"></td>
                 <th rowspan="3">照片</th>
                 <td rowspan="3" class="file-input">
-                    <input type="file" accept="image/*">
+                    <input type="file" id="photo" accept="image/*">
+                    <img id="photo-preview" class="preview-image" src="" alt="预览图片">
                 </td>
             </tr>
             <tr>
                 <th>籍贯</th>
-                <td><input type="text" maxlength="20"></td>
+                <td><input type="text" id="hometown" maxlength="20"></td>
                 <th>联系电话</th>
-                <td><input type="tel" maxlength="11"></td>
+                <td><input type="tel" id="phone" maxlength="11"></td>
                 <th>电子邮箱</th>
-                <td><input type="email" maxlength="50"></td>
+                <td><input type="email" id="email" maxlength="50"></td>
             </tr>
             <tr>
                 <th>学历</th>
                 <td>
-                    <select>
+                    <select id="education">
                         <option value="">请选择</option>
                         <option value="high-school">高中</option>
                         <option value="college">大专</option>
@@ -207,7 +216,7 @@
                 </td>
                 <th>健康状况</th>
                 <td>
-                    <select>
+                    <select id="health">
                         <option value="">请选择</option>
                         <option value="excellent">优秀</option>
                         <option value="good">良好</option>
@@ -216,7 +225,7 @@
                 </td>
                 <th>婚姻状况</th>
                 <td>
-                    <select>
+                    <select id="marital">
                         <option value="">请选择</option>
                         <option value="single">未婚</option>
                         <option value="married">已婚</option>
@@ -252,7 +261,7 @@
             <tr>
                 <th>求职意向</th>
                 <td>
-                    <select multiple size="4">
+                    <select multiple size="4" id="job-intent">
                         <option value="software">软件开发</option>
                         <option value="web">Web前端</option>
                         <option value="data">数据分析</option>
@@ -261,7 +270,7 @@
                 </td>
                 <th>专业</th>
                 <td>
-                    <select>
+                    <select id="major">
                         <option value="">请选择</option>
                         <option value="computer">计算机科学</option>
                         <option value="software">软件工程</option>
@@ -269,7 +278,7 @@
                     </select>
                 </td>
                 <th>毕业院校</th>
-                <td><input type="text" maxlength="50"></td>
+                <td><input type="text" id="university" maxlength="50"></td>
             </tr>
         </table>
         
@@ -298,16 +307,182 @@
         <table>
             <tr>
                 <th>项目经历</th>
-                <td><textarea maxlength="500"></textarea></td>
+                <td><textarea id="project" maxlength="500"></textarea></td>
             </tr>
             <tr>
                 <th>自我评价</th>
-                <td><textarea maxlength="500"></textarea></td>
+                <td><textarea id="evaluation" maxlength="500"></textarea></td>
             </tr>
         </table>
         
-        <button type="submit">提交</button>
-        <button type="reset">清空</button>
+        <button type="button" id="save-btn">保存</button>
+        <button type="button" id="reset-btn">清空</button>
     </div>
+
+    <script>
+        // 保存按钮点击事件
+        document.getElementById('save-btn').addEventListener('click', function() {
+            // 获取所有输入字段的值
+            const name = document.getElementById('name').value;
+            const gender = document.getElementById('gender').value;
+            const age = document.getElementById('age').value;
+            const hometown = document.getElementById('hometown').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const education = document.getElementById('education').value;
+            const health = document.getElementById('health').value;
+            const marital = document.getElementById('marital').value;
+            
+            // 获取技能证书的选中项
+            const skill1 = document.getElementById('skill1').checked;
+            const skill2 = document.getElementById('skill2').checked;
+            const skill3 = document.getElementById('skill3').checked;
+            const skill4 = document.getElementById('skill4').checked;
+            
+            // 获取求职意向的选中项
+            const jobIntent = [];
+            const jobOptions = document.getElementById('job-intent').options;
+            for (let i = 0; i < jobOptions.length; i++) {
+                if (jobOptions[i].selected) {
+                    jobIntent.push(jobOptions[i].value);
+                }
+            }
+            
+            // 获取专业和毕业院校
+            const major = document.getElementById('major').value;
+            const university = document.getElementById('university').value;
+            
+            // 获取个人特长与爱好的选中项
+            const hobby1 = document.getElementById('hobby1').checked;
+            const hobby2 = document.getElementById('hobby2').checked;
+            const hobby3 = document.getElementById('hobby3').checked;
+            const hobby4 = document.getElementById('hobby4').checked;
+            
+            // 获取项目经历和自我评价
+            const project = document.getElementById('project').value;
+            const evaluation = document.getElementById('evaluation').value;
+            
+            // 保存照片的base64数据
+            const photoPreview = document.getElementById('photo-preview').src;
+            
+            // 将数据存储到localStorage
+            const resumeData = {
+                name, gender, age, hometown, phone, email, education, health, marital,
+                skill1, skill2, skill3, skill4,
+                jobIntent, major, university,
+                hobby1, hobby2, hobby3, hobby4,
+                project, evaluation,
+                photoPreview
+            };
+            
+            localStorage.setItem('resumeData', JSON.stringify(resumeData));
+            alert('保存成功！');
+        });
+        
+        // 清空按钮点击事件
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            // 清空所有输入字段
+            document.getElementById('name').value = '';
+            document.getElementById('gender').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('hometown').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('education').value = '';
+            document.getElementById('health').value = '';
+            document.getElementById('marital').value = '';
+            
+            // 清空技能证书的选中项
+            document.getElementById('skill1').checked = false;
+            document.getElementById('skill2').checked = false;
+            document.getElementById('skill3').checked = false;
+            document.getElementById('skill4').checked = false;
+            
+            // 清空求职意向的选中项
+            const jobOptions = document.getElementById('job-intent').options;
+            for (let i = 0; i < jobOptions.length; i++) {
+                jobOptions[i].selected = false;
+            }
+            
+            // 清空专业和毕业院校
+            document.getElementById('major').value = '';
+            document.getElementById('university').value = '';
+            
+            // 清空个人特长与爱好的选中项
+            document.getElementById('hobby1').checked = false;
+            document.getElementById('hobby2').checked = false;
+            document.getElementById('hobby3').checked = false;
+            document.getElementById('hobby4').checked = false;
+            
+            // 清空项目经历和自我评价
+            document.getElementById('project').value = '';
+            document.getElementById('evaluation').value = '';
+            
+            // 清空照片预览
+            document.getElementById('photo-preview').src = '';
+        });
+        
+        // 文件上传事件
+        document.getElementById('photo').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photo-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // 页面加载时从localStorage恢复数据
+        window.addEventListener('load', function() {
+            const savedData = localStorage.getItem('resumeData');
+            if (savedData) {
+                const resumeData = JSON.parse(savedData);
+                
+                // 恢复输入字段的值
+                document.getElementById('name').value = resumeData.name || '';
+                document.getElementById('gender').value = resumeData.gender || '';
+                document.getElementById('age').value = resumeData.age || '';
+                document.getElementById('hometown').value = resumeData.hometown || '';
+                document.getElementById('phone').value = resumeData.phone || '';
+                document.getElementById('email').value = resumeData.email || '';
+                document.getElementById('education').value = resumeData.education || '';
+                document.getElementById('health').value = resumeData.health || '';
+                document.getElementById('marital').value = resumeData.marital || '';
+                
+                // 恢复技能证书的选中项
+                document.getElementById('skill1').checked = resumeData.skill1 || false;
+                document.getElementById('skill2').checked = resumeData.skill2 || false;
+                document.getElementById('skill3').checked = resumeData.skill3 || false;
+                document.getElementById('skill4').checked = resumeData.skill4 || false;
+                
+                // 恢复求职意向的选中项
+                const jobOptions = document.getElementById('job-intent').options;
+                for (let i = 0; i < jobOptions.length; i++) {
+                    jobOptions[i].selected = resumeData.jobIntent.includes(jobOptions[i].value);
+                }
+                
+                // 恢复专业和毕业院校
+                document.getElementById('major').value = resumeData.major || '';
+                document.getElementById('university').value = resumeData.university || '';
+                
+                // 恢复个人特长与爱好的选中项
+                document.getElementById('hobby1').checked = resumeData.hobby1 || false;
+                document.getElementById('hobby2').checked = resumeData.hobby2 || false;
+                document.getElementById('hobby3').checked = resumeData.hobby3 || false;
+                document.getElementById('hobby4').checked = resumeData.hobby4 || false;
+                
+                // 恢复项目经历和自我评价
+                document.getElementById('project').value = resumeData.project || '';
+                document.getElementById('evaluation').value = resumeData.evaluation || '';
+                
+                // 恢复照片预览
+                document.getElementById('photo-preview').src = resumeData.photoPreview || '';
+            }
+        });
+    </script>
 </body>
 </html>
+          
+          
