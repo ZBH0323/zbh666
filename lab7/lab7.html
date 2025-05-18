@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>七彩灯光控制器 Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4CAF50',
+                        secondary: '#f44336',
+                        dark: '#1a1a1a',
+                        light: '#f5f5f5',
+                        accent: '#64B5F6',
+                        warning: '#FFC107',
+                        info: '#2196F3',
+                        success: '#4CAF50',
+                        danger: '#f44336',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .light-glow {
+                box-shadow: 0 0 15px currentColor, 0 0 30px currentColor, 0 0 45px currentColor;
+            }
+            .button-pulse {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+                }
+            }
+            .scale-hover {
+                transition: transform 0.3s ease;
+            }
+            .scale-hover:hover {
+                transform: scale(1.05);
+            }
+            .gradient-text {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(30, 30, 30, 0.6);
+            }
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 3px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-dark to-gray-900 min-h-screen font-inter text-light flex flex-col overflow-x-hidden">
+    <!-- 顶部导航 -->
+    <header class="w-full glass-effect border-b border-gray-800 py-4 px-6 fixed top-0 z-50 transition-all duration-300">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold gradient-text bg-gradient-to-r from-primary to-green-300 flex items-center">
+                <i class="fa fa-lightbulb-o mr-2 text-yellow-400"></i>
+                七彩灯光控制器 <span class="text-xs ml-2 bg-info/20 px-2 py-0.5 rounded-full">Pro</span>
+            </h1>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-800 transition-all duration-300">
+                    <i class="fa fa-moon-o"></i>
+                </button>
+                <button id="settingsBtn" class="p-2 rounded-full hover:bg-gray-800 transition-all duration-300">
+                    <i class="fa fa-cog"></i>
+                </button>
+                <button id="statsBtn" class="p-2 rounded-full hover:bg-gray-800 transition-all duration-300">
+                    <i class="fa fa-bar-chart"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow flex flex-col justify-center items-center pt-24 pb-12 px-4">
+        <div class="max-w-5xl w-full glass-effect rounded-2xl p-8 shadow-2xl border border-gray-800 transition-all duration-500 hover:shadow-primary/30">
+            <!-- 标题和说明 -->
+            <div class="text-center mb-10">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4 gradient-text bg-gradient-to-r from-primary to-green-300">高级七彩灯光秀</h2>
+                <p class="text-gray-400 max-w-xl mx-auto">体验七种不同颜色的灯光交替闪烁效果，自定义你的灯光体验</p>
+            </div>
+
+            <!-- 灯光显示区 -->
+            <div class="light-container flex flex-wrap justify-center gap-6 mb-10 transition-all duration-500">
+                <div class="light w-20 h-20 rounded-full scale-hover" data-index="0"></div>
+                <div class="light w-20 h-20 rounded-full scale-hover" data-index="1"></div>
+                <div class="light w-20 h-20 rounded-full scale-hover" data-index="2"></div>
+                <div class="light w-20 h-20 rounded-full scale-hover" data-index="3"></div>
+                <div class="light w-20 h-20 rounded-full scale-hover" data-index="4"></div>
+                <div class="light w-20 h-20 rounded-full scale-hover" data-index="5"></div>
+                <div class="light w-20 h-20 rounded-full scale-hover" data-index="6"></div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="control-panel grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                <!-- 主控制按钮 -->
+                <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-6 flex flex-col items-center">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">控制中心</h3>
+                    <button id="toggleButton" class="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-10 rounded-full shadow-lg shadow-primary/30 flex items-center gap-2 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                        <i class="fa fa-play"></i>
+                        <span>启动</span>
+                    </button>
+                    <div class="mt-4 text-sm text-gray-500">点击按钮控制灯光的启动与停止</div>
+                </div>
+
+                <!-- 速度控制滑块 -->
+                <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">闪烁速度</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <i class="fa fa-clock-o text-gray-500"></i>
+                            <input type="range" id="speedSlider" min="100" max="3000" step="100" value="1000" 
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                            <i class="fa fa-bolt text-gray-500"></i>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>慢速</span>
+                            <span id="speedValue">1000ms</span>
+                            <span>快速</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 颜色模式选择 -->
+                <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">颜色模式</h3>
+                    <div class="space-y-4">
+                        <select id="colorMode" class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            <option value="random">随机颜色</option>
+                            <option value="rainbow">彩虹渐变</option>
+                            <option value="pastel">柔和色调</option>
+                            <option value="vibrant">鲜艳色彩</option>
+                            <option value="monochrome">单色渐变</option>
+                        </select>
+                        <div id="colorModePreview" class="h-10 rounded-lg bg-gradient-to-r from-red-500 via-green-500 to-blue-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 高级控制区 -->
+            <div class="advanced-controls grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <!-- 灯光数量选择 -->
+                <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">灯光数量</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <i class="fa fa-lightbulb-o text-gray-500"></i>
+                            <input type="range" id="lightCount" min="2" max="12" step="1" value="7" 
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                            <i class="fa fa-lightbulb-o text-gray-500"></i>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>2个</span>
+                            <span id="lightCountValue">7个</span>
+                            <span>12个</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 动画效果选择 -->
+                <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">动画效果</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <input type="radio" id="effect-blink" name="animationEffect" value="blink" checked
+                                   class="w-4 h-4 accent-primary">
+                            <label for="effect-blink" class="ml-2 text-gray-300">同步闪烁</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="effect-wave" name="animationEffect" value="wave"
+                                   class="w-4 h-4 accent-primary">
+                            <label for="effect-wave" class="ml-2 text-gray-300">波浪效果</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="effect-pulse" name="animationEffect" value="pulse"
+                                   class="w-4 h-4 accent-primary">
+                            <label for="effect-pulse" class="ml-2 text-gray-300">脉冲效果</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="effect-random" name="animationEffect" value="random"
+                                   class="w-4 h-4 accent-primary">
+                            <label for="effect-random" class="ml-2 text-gray-300">随机效果</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 颜色配置区 -->
+            <div class="color-config bg-gray-900/50 rounded-xl border border-gray-800 p-6 mb-10">
+                <h3 class="text-lg font-semibold mb-4 text-gray-300">自定义颜色</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="flex items-center">
+                        <input type="color" id="customColor1" value="#FF5722" class="w-10 h-10 rounded-full cursor-pointer">
+                        <span class="ml-2 text-sm text-gray-400">颜色 1</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="color" id="customColor2" value="#FFC107" class="w-10 h-10 rounded-full cursor-pointer">
+                        <span class="ml-2 text-sm text-gray-400">颜色 2</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="color" id="customColor3" value="#4CAF50" class="w-10 h-10 rounded-full cursor-pointer">
+                        <span class="ml-2 text-sm text-gray-400">颜色 3</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="color" id="customColor4" value="#2196F3" class="w-10 h-10 rounded-full cursor-pointer">
+                        <span class="ml-2 text-sm text-gray-400">颜色 4</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="color" id="customColor5" value="#9C27B0" class="w-10 h-10 rounded-full cursor-pointer">
+                        <span class="ml-2 text-sm text-gray-400">颜色 5</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="color" id="customColor6" value="#E91E63" class="w-10 h-10 rounded-full cursor-pointer">
+                        <span class="ml-2 text-sm text-gray-400">颜色 6</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="color" id="customColor7" value="#00BCD4" class="w-10 h-10 rounded-full cursor-pointer">
+                        <span class="ml-2 text-sm text-gray-400">颜色 7</span>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="applyCustomColors" class="ml-auto bg-accent hover:bg-accent/90 text-white text-sm font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                            应用自定义颜色
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 灯光效果状态 -->
+            <div class="status-info grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">状态信息</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">当前状态:</span>
+                            <span id="statusText" class="font-medium">灯光已停止</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">运行时间:</span>
+                            <span id="runTime" class="font-medium">00:00:00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">颜色模式:</span>
+                            <span id="colorInfo" class="font-medium">随机颜色</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">闪烁次数:</span>
+                            <span id="flashCount" class="font-medium">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">使用统计</h3>
+                    <div class="h-48">
+                        <canvas id="statsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 设置面板 (默认隐藏) -->
+    <div id="settingsPanel" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center transform translate-y-full transition-transform duration-300 ease-in-out">
+        <div class="bg-dark border border-gray-800 rounded-2xl w-full max-w-md p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-300">设置</h3>
+                <button id="closeSettings" class="text-gray-400 hover:text-white">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">主题</label>
+                    <div class="flex space-x-3">
+                        <button class="theme-option w-10 h-10 rounded-full bg-gradient-to-br from-primary to-green-300 border-2 border-white"></button>
+                        <button class="theme-option w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border border-gray-600"></button>
+                        <button class="theme-option w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border border-gray-600"></button>
+                        <button class="theme-option w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-red-500 border border-gray-600"></button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">界面语言</label>
+                    <select class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                        <option value="zh">简体中文</option>
+                        <option value="en">English</option>
+                        <option value="ja">日本語</option>
+                        <option value="ko">한국어</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">动画强度</label>
+                    <input type="range" min="1" max="3" step="1" value="2" 
+                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                </div>
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="w-4 h-4 accent-primary">
+                        <span class="ml-2 text-sm text-gray-300">启动时自动播放</span>
+                    </label>
+                </div>
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="w-4 h-4 accent-primary">
+                        <span class="ml-2 text-sm text-gray-300">启用声音反馈</span>
+                    </label>
+                </div>
+            </div>
+            <div class="mt-8">
+                <button class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300">
+                    保存设置
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="w-full glass-effect border-t border-gray-800 py-4 px-6">
+        <div class="container mx-auto text-center text-gray-500 text-sm">
+            <p>© 2025 七彩灯光控制器 Pro | 设计与开发</p>
+        </div>
+    </footer>
+
+    <script>
+        let intervalId = null;
+        let isRunning = false;
+        let flashSpeed = 1000; // 默认闪烁速度（毫秒）
+        let colorMode = 'random'; // 默认颜色模式
+        let lightCount = 7; // 默认灯光数量
+        let animationEffect = 'blink'; // 默认动画效果
+        let flashCounter = 0; // 闪烁计数器
+        let runTimeCounter = 0; // 运行时间计数器
+        let runTimeInterval = null;
+        let statsData = Array(7).fill(0); // 统计数据
+        
+        // 初始化灯光
+        const lightsContainer = document.querySelector('.light-container');
+        const toggleButton = document.getElementById('toggleButton');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const colorModeSelect = document.getElementById('colorMode');
+        const colorModePreview = document.getElementById('colorModePreview');
+        const lightCountSlider = document.getElementById('lightCount');
+        const lightCountValue = document.getElementById('lightCountValue');
+        const statusText = document.getElementById('statusText');
+        const runTime = document.getElementById('runTime');
+        const colorInfo = document.getElementById('colorInfo');
+        const flashCount = document.getElementById('flashCount');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const closeSettings = document.getElementById('closeSettings');
+        const effectRadios = document.querySelectorAll('input[name="animationEffect"]');
+        const customColorInputs = document.querySelectorAll('input[type="color"]');
+        const applyCustomColorsBtn = document.getElementById('applyCustomColors');
+        const statsBtn = document.getElementById('statsBtn');
+        const statsPanel = document.getElementById('statsPanel');
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // 初始化图表
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        const statsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['红', '橙', '黄', '绿', '蓝', '靛', '紫'],
+                datasets: [{
+                    label: '颜色使用频率',
+                    data: statsData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(255, 205, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(201, 203, 207, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(255, 159, 64)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(54, 162, 235)',
+                        'rgb(153, 102, 255)',
+                        'rgb(201, 203, 207)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // 生成不重复的随机颜色
+        function getUniqueColors(count) {
+            const colors = [];
+            
+            // 根据不同模式生成颜色
+            switch(colorMode) {
+                case 'rainbow':
+                    for (let i = 0; i < count; i++) {
+                        const hue = 360 * (i / count);
+                        colors.push(`hsl(${hue}, 100%, 65%)`);
+                    }
+                    break;
+                case 'pastel':
+                    while (colors.length < count) {
+                        const pastelHue = Math.floor(Math.random() * 360);
+                        const color = `hsl(${pastelHue}, 70%, 85%)`;
+                        if (!colors.includes(color)) {
+                            colors.push(color);
+                        }
+                    }
+                    break;
+                case 'vibrant':
+                    while (colors.length < count) {
+                        const vibrantHue = Math.floor(Math.random() * 360);
+                        const color = `hsl(${vibrantHue}, 90%, 60%)`;
+                        if (!colors.includes(color)) {
+                            colors.push(color);
+                        }
+                    }
+                    break;
+                case 'monochrome':
+                    const baseHue = Math.floor(Math.random() * 360);
+                    for (let i = 0; i < count; i++) {
+                        const lightness = 30 + (i * 10); // 30% 到 90% 的亮度变化
+                        colors.push(`hsl(${baseHue}, 80%, ${lightness}%)`);
+                    }
+                    break;
+                case 'custom':
+                    // 使用自定义颜色
+                    const customColors = Array.from(customColorInputs).map(input => input.value);
+                    for (let i = 0; i < count; i++) {
+                        colors.push(customColors[i % customColors.length]);
+                    }
+                    break;
+                default: // random
+                    while (colors.length < count) {
+                        const color = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+                        if (!colors.includes(color)) {
+                            colors.push(color);
+                        }
+                    }
+            }
+            
+            // 更新统计数据
+            updateStats(colors);
+            
+            return colors;
+        }
+        
+        // 更新统计数据
+        function updateStats(colors) {
+            colors.forEach(color => {
+                // 简单的颜色分类
+                const r = parseInt(color.substr(1, 2), 16);
+                const g = parseInt(color.substr(3, 2), 16);
+                const b = parseInt(color.substr(5, 2), 16);
+                
+                // 基本颜色分类逻辑
+                if (r > g && r > b) {
+                    statsData[0]++; // 红色
+                } else if (r > g && r <= b) {
+                    statsData[1]++; // 橙色
+                } else if (r <= g && g > b) {
+                    statsData[2]++; // 黄色
+                } else if (r < g && g < b) {
+                    statsData[3]++; // 绿色
+                } else if (r <= b && g <= b) {
+                    statsData[4]++; // 蓝色
+                } else if (r > g && g <= b) {
+                    statsData[5]++; // 靛色
+                } else {
+                    statsData[6]++; // 紫色
+                }
+            });
+            
+            // 更新图表
+            statsChart.data.datasets[0].data = statsData;
+            statsChart.update();
+        }
+
+        // 更新灯光颜色
+        function updateLights() {
+            const colors = getUniqueColors(lightCount);
+            const allLights = document.querySelectorAll('.light');
+            
+            // 确保灯光数量正确
+            if (allLights.length !== lightCount) {
+                createLights();
+                return;
+            }
+            
+            // 根据不同动画效果应用颜色
+            switch(animationEffect) {
+                case 'wave':
+                    // 波浪效果 - 逐个应用颜色
+                    allLights.forEach((light, index) => {
+                        setTimeout(() => {
+                            light.style.backgroundColor = colors[index];
+                            light.style.boxShadow = `0 0 15px ${colors[index]}, 0 0 30px ${colors[index]}`;
+                        }, index * 100);
+                    });
+                    break;
+                case 'pulse':
+                    // 脉冲效果 - 所有灯使用相同颜色但不同透明度
+                    const baseColor = colors[0];
+                    allLights.forEach((light, index) => {
+                        const alpha = 0.5 + (index * 0.1); // 0.5 到 1.1 的透明度
+                        light.style.backgroundColor = baseColor;
+                        light.style.boxShadow = `0 0 15px ${baseColor}, 0 0 30px ${baseColor}`;
+                    });
+                    break;
+                case 'random':
+                    // 随机效果 - 每个灯随机选择颜色
+                    allLights.forEach(light => {
+                        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                        light.style.backgroundColor = randomColor;
+                        light.style.boxShadow = `0 0 15px ${randomColor}, 0 0 30px ${randomColor}`;
+                    });
+                    break;
+                default: // blink
+                    // 同步闪烁 - 所有灯同时改变颜色
+                    allLights.forEach((light, index) => {
+                        light.style.backgroundColor = colors[index];
+                        light.style.boxShadow = `0 0 15px ${colors[index]}, 0 0 30px ${colors[index]}`;
+                    });
+            }
+            
+            // 更新闪烁计数
+            flashCounter++;
+            flashCount.textContent = flashCounter;
+        }
+        
+        // 创建灯光元素
+        function createLights() {
+            lightsContainer.innerHTML = '';
+            
+            for (let i = 0; i < lightCount; i++) {
+                const light = document.createElement('div');
+                light.className = 'light w-20 h-20 rounded-full scale-hover';
+                light.dataset.index = i;
+                lightsContainer.appendChild(light);
+            }
+            
+            // 如果正在运行，立即更新灯光
+            if (isRunning) {
+                updateLights();
+            }
+        }
+
+        // 切换运行状态
+        function toggleLights() {
+            if (isRunning) {
+                // 停止灯光
+                clearInterval(intervalId);
+                if (runTimeInterval) clearInterval(runTimeInterval);
+                toggleButton.innerHTML = '<i class="fa fa-play"></i><span>启动</span>';
+                toggleButton.classList.remove('bg-secondary', 'shadow-secondary/30');
+                toggleButton.classList.add('bg-primary', 'shadow-primary/30');
+                statusText.textContent = '灯光已停止';
+                statusText.classList.remove('text-secondary');
+                statusText.classList.add('text-gray-500');
+                
+                // 移除灯光效果
+                document.querySelectorAll('.light').forEach(light => {
+                    light.style.boxShadow = 'none';
+                });
+            } else {
+                // 启动灯光
+                createLights(); // 确保灯光数量正确
+                updateLights(); // 立即更新一次颜色
+                intervalId = setInterval(updateLights, flashSpeed);
+                toggleButton.innerHTML = '<i class="fa fa-stop"></i><span>停止</span>';
+                toggleButton.classList.remove('bg-primary', 'shadow-primary/30');
+                toggleButton.classList.add('bg-secondary', 'shadow-secondary/30');
+                statusText.textContent = '灯光正在运行中...';
+                statusText.classList.remove('text-gray-500');
+                statusText.classList.add('text-secondary');
+                
+                // 启动运行时间计时器
+                runTimeCounter = 0;
+                runTimeInterval = setInterval(() => {
+                    runTimeCounter++;
+                    const hours = Math.floor(runTimeCounter / 3600).toString().padStart(2, '0');
+                    const minutes = Math.floor((runTimeCounter % 3600) / 60).toString().padStart(2, '0');
+                    const seconds = (runTimeCounter % 60).toString().padStart(2, '0');
+                    runTime.textContent = `${hours}:${minutes}:${seconds}`;
+                }, 1000);
+            }
+            
+            isRunning = !isRunning;
+        }
+        
+        // 更新闪烁速度
+        function updateSpeed() {
+            flashSpeed = parseInt(speedSlider.value);
+            speedValue.textContent = `${flashSpeed}ms`;
+            
+            // 如果正在运行，重新设置间隔
+            if (isRunning) {
+                clearInterval(intervalId);
+                intervalId = setInterval(updateLights, flashSpeed);
+            }
+        }
+        
+        // 更新颜色模式
+        function updateColorMode() {
+            colorMode = colorModeSelect.value;
+            
+            // 更新模式预览
+            switch(colorMode) {
+                case 'rainbow':
+                    colorModePreview.style.background = 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)';
+                    break;
+                case 'pastel':
+                    colorModePreview.style.background = 'linear-gradient(to right, #FFD1DC, #FFDFD3, #E0FFFF, #D3FFCE, #FFF6CC, #FFE6F2, #E6E6FA)';
+                    break;
+                case 'vibrant':
+                    colorModePreview.style.background = 'linear-gradient(to right, #FF5733, #FFC300, #DAF7A6, #C70039, #900C3F, #581845, #9C27B0)';
+                    break;
+                case 'monochrome':
+                    const baseHue = Math.floor(Math.random() * 360);
+                    colorModePreview.style.background = `linear-gradient(to right, hsl(${baseHue}, 80%, 30%), hsl(${baseHue}, 80%, 90%))`;
+                    break;
+                case 'custom':
+                    colorModePreview.style.background = 'linear-gradient(to right, #FF5722, #FFC107, #4CAF50, #2196F3, #9C27B0, #E91E63, #00BCD4)';
+                    break;
+                default: // random
+                    colorModePreview.style.background = 'linear-gradient(to right, #' + 
+                        Math.floor(Math.random()*16777215).toString(16).padStart(6, '0') + ', #' + 
+                        Math.floor(Math.random()*16777215).toString(16).padStart(6, '0') + ')';
+            }
+            
+            // 更新颜色信息
+            colorInfo.textContent = colorMode === 'random' ? '随机颜色' :
+                                  colorMode === 'rainbow' ? '彩虹渐变' :
+                                  colorMode === 'pastel' ? '柔和色调' :
+                                  colorMode === 'vibrant' ? '鲜艳色彩' :
+                                  colorMode === 'monochrome' ? '单色渐变' : '自定义颜色';
+            
+            // 如果正在运行，立即应用新模式
+            if (isRunning) {
+                updateLights();
+            }
+        }
+        
+        // 更新灯光数量
+        function updateLightCount() {
+            lightCount = parseInt(lightCountSlider.value);
+            lightCountValue.textContent = `${lightCount}个`;
+            
+            // 如果正在运行，立即更新灯光
+            if (isRunning) {
+                createLights();
+            }
+        }
+        
+        // 更新动画效果
+        function updateAnimationEffect() {
+            animationEffect = document.querySelector('input[name="animationEffect"]:checked').value;
+        }
+        
+        // 应用自定义颜色
+        function applyCustomColors() {
+            colorMode = 'custom';
+            colorModeSelect.value = 'custom';
+            updateColorMode();
+            
+            // 如果正在运行，立即应用新颜色
+            if (isRunning) {
+                updateLights();
+            }
+        }
+        
+        // 打开设置面板
+        function openSettings() {
+            settingsPanel.classList.remove('translate-y-full');
+        }
+        
+        // 关闭设置面板
+        function closeSettingsPanel() {
+            settingsPanel.classList.add('translate-y-full');
+        }
+        
+        // 初始化事件监听
+        toggleButton.addEventListener('click', toggleLights);
+        speedSlider.addEventListener('input', updateSpeed);
+        colorModeSelect.addEventListener('change', updateColorMode);
+        lightCountSlider.addEventListener('input', updateLightCount);
+        effectRadios.forEach(radio => radio.addEventListener('change', updateAnimationEffect));
+        settingsBtn.addEventListener('click', openSettings);
+        closeSettings.addEventListener('click', closeSettingsPanel);
+        applyCustomColorsBtn.addEventListener('click', applyCustomColors);
+        
+        // 点击设置面板外部关闭面板
+        settingsPanel.addEventListener('click', (e) => {
+            if (e.target === settingsPanel) {
+                closeSettingsPanel();
+            }
+        });
+        
+        // 窗口滚动效果
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 10) {
+                header.classList.add('py-2');
+                header.classList.remove('py-4');
+            } else {
+                header.classList.add('py-4');
+                header.classList.remove('py-2');
+            }
+        });
+        
+        // 初始化页面
+        updateColorMode();
+        updateAnimationEffect();
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                toggleLights();
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
