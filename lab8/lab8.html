@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机点名系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .menu-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .section {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .section-title i {
+            margin-right: 8px;
+            color: #1890ff;
+        }
+        .student-list {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .input-container {
+            flex: 1;
+            position: relative;
+        }
+        .student-input {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+            font-size: 14px;
+        }
+        .student-input-placeholder {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #aaa;
+            font-size: 14px;
+        }
+        .student-info {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .student-count {
+            background-color: #f7f7f7;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .count-icon {
+            margin-right: 8px;
+            color: #1890ff;
+        }
+        .count-text {
+            font-size: 14px;
+            color: #666;
+        }
+        .count-number {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        .import-btn {
+            background-color: #f7f7f7;
+            padding: 12px 15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .import-btn:hover {
+            background-color: #eaeaea;
+        }
+        .import-icon {
+            margin-right: 8px;
+            color: #1890ff;
+        }
+        .import-text {
+            font-size: 14px;
+            color: #666;
+        }
+        .name-display {
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f7f7f7;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .display-title {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .display-name {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1890ff;
+        }
+        .history-list {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px 0;
+        }
+        .history-item {
+            min-width: 120px;
+            background-color: #f7f7f7;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .history-item:hover {
+            background-color: #eaeaea;
+            transform: translateY(-3px);
+        }
+        .history-item-number {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        .history-item-name {
+            font-size: 16px;
+            color: #333;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .control-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        .control-btn i {
+            margin-right: 5px;
+        }
+        .btn-start {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-start:hover {
+            background-color: #40a9ff;
+        }
+        .btn-stop {
+            background-color: #ff4d4f;
+            color: white;
+        }
+        .btn-stop:hover {
+            background-color: #ff7875;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="menu-icon">☰</div>
+            <div class="header-title">学生名单</div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i>📝</i> 学生名单
+            </div>
+            <div class="student-list">
+                <div class="input-container">
+                    <textarea class="student-input" id="studentInput" placeholder=""></textarea>
+                    <div class="student-input-placeholder"></div>
+                </div>
+                <div class="student-info">
+                    <div class="student-count">
+                        <span class="count-icon">👥</span>
+                        <span class="count-text">学生数量</span>
+                        <span class="count-number" id="studentCount">0</span>
+                        <span class="count-text">人</span>
+                    </div>
+                    <div class="import-btn" id="importBtn">
+                        <span class="import-icon">↑</span>
+                        <span class="import-text">导入名单</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i>🎯</i> 随机点名
+            </div>
+            <div class="name-display" id="nameDisplay">
+                <div class="display-title">当前选中</div>
+                <div class="display-name" id="displayName">点击开始按钮</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i>⏱️</i> 最近选中
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- 历史记录将通过JavaScript动态添加 -->
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn btn-start" id="startBtn">
+                <i>▶</i> 开始
+            </button>
+            <button class="control-btn btn-stop" id="stopBtn" disabled>
+                <i>■</i> 停止
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const studentInput = document.getElementById('studentInput');
+            const studentCount = document.getElementById('studentCount');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const nameDisplay = document.getElementById('displayName');
+            const historyList = document.getElementById('historyList');
+            const importBtn = document.getElementById('importBtn');
+            
+            let studentNames = [];
+            let intervalId = null;
+            let isRunning = false;
+            let history = [];
+            
+            // 初始化学生名单
+            function initStudentNames() {
+                // 添加之前提供的学生姓名
+                const previousNames = [
+                    '陈昊妍', '董萌萌', '范昱涵', '高一涵', '郭超', '白林涵', '侯宪坤', '黄博', '姜子超', '鞠忠宏', '李茂川', '李永乐', '李云', '林佳祺', '吕君蕊', '秦金龙', '秦士淞', '孙家豪', '孙若冰', '孙义凯', '孙子凌', '索京奥', '王朝闻', '王俊豪', '王梦月', '王文昌', '王运旺', '王祉盛', '卫学振', '武启航', '徐浩文', '许广洋', '许源赫', '薛景文', '张丁文', '张静', '张俊飞', '张艳可', '张云翔', '张志恒', '赵宝华', '赵家豪', '周政涟', '邹谦慧'
+                ];
+                
+                studentInput.value = previousNames.join('\n');
+                updateStudentNames();
+            }
+            
+            // 更新学生名单
+            function updateStudentNames() {
+                studentNames = studentInput.value.split('\n').filter(name => name.trim() !== '');
+                studentCount.textContent = studentNames.length;
+                if (studentNames.length > 0) {
+                    nameDisplay.textContent = studentNames[0];
+                }
+                renderHistory();
+            }
+            
+            // 渲染历史记录
+            function renderHistory() {
+                historyList.innerHTML = '';
+                history.slice(0, 10).forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <div class="history-item-number">#${index + 1}</div>
+                        <div class="history-item-name">${item}</div>
+                    `;
+                    historyItem.addEventListener('click', () => {
+                        if (!isRunning) {
+                            nameDisplay.textContent = item;
+                        }
+                    });
+                    historyList.appendChild(historyItem);
+                });
+            }
+            
+            // 添加到历史记录
+            function addToHistory(name) {
+                if (!history.includes(name)) {
+                    history.unshift(name);
+                    renderHistory();
+                }
+            }
+            
+            // 开始随机点名
+            startBtn.addEventListener('click', () => {
+                if (!isRunning && studentNames.length > 0) {
+                    isRunning = true;
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    
+                    intervalId = setInterval(() => {
+                        const randomIndex = Math.floor(Math.random() * studentNames.length);
+                        nameDisplay.textContent = studentNames[randomIndex];
+                    }, 80);
+                }
+            });
+            
+            // 停止随机点名
+            stopBtn.addEventListener('click', () => {
+                if (isRunning) {
+                    isRunning = false;
+                    clearInterval(intervalId);
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    
+                    const selectedName = nameDisplay.textContent;
+                    addToHistory(selectedName);
+                }
+            });
+            
+            // 导入学生名单
+            importBtn.addEventListener('click', () => {
+                updateStudentNames();
+            });
+            
+            // 监听学生名单输入变化
+            studentInput.addEventListener('input', updateStudentNames);
+            
+            // 初始化
+            initStudentNames();
+        });
+    </script>
+</body>
+</html>
